@@ -1,6 +1,6 @@
 {
   "name": "ntab",
-  "version": "0.0.0",
+  "version": "1.0.1",
   "private": true,
   "type": "module",
   "scripts": {
@@ -13,6 +13,9 @@
     "type-check": "vue-tsc --build --force"
   },
   "dependencies": {
+    "@ant-design/icons-vue": "^7.0.1",
+    "@vueuse/core": "^10.7.0",
+    "ant-design-vue": "4",
     "pinia": "^2.1.7",
     "vue": "^3.3.11",
     "vue-router": "^4.2.5"

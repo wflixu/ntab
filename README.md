@@ -1,6 +1,8 @@
 # ntab
 
-自定义tab 导航也
+自定义tab 导航页，自定义搜索，效果如下
+
+![步骤-1](./public/imgs/preview.jpg)
 
 # 使用方法
 
@@ -20,9 +22,8 @@ pnpm build
 
 ![步骤-1](./public/imgs/step-2.jpg)
 
-## 效果
 
-![步骤-1](./public/imgs/preview.jpg)
+
 # 其他
 
 欢迎pr
