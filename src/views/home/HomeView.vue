@@ -1,5 +1,8 @@
 <template>
   <div class="page">
+    <div class="backend" @click="onClickBackend">
+
+    </div>
     <div class="box">
       <div class="search-input">
         <input
@@ -9,7 +12,7 @@
           @input="onInput"
           @keyup.enter="onEnter"
         />
-        <div class="search-selector" @click="showEngineList = true">
+        <div class="search-selector" @click.stop="showEngineList = true">
           <template v-if="currentEngine">
             <img
               :src="currentEngine.img"
@@ -67,9 +70,7 @@ import toutiao from "./../../assets/search/logo-toutiao.png";
 import douban from "./../../assets/search/logo-douban.png";
 import movie from "./../../assets/search/logo-douban-movie.png";
 import cargo from "./../../assets/search/logo-cargo.png";
-import avatar from "./../../assets/imgs/avatar-1.jpeg";
 import WebNavi from './WebNavi.vue'
-
 
 
 let keyword = ref("");
@@ -144,6 +145,8 @@ const onClickEngine = (item: any) => {
   window.localStorage.setItem("engine", item.id);
   showEngineList.value = false;
 };
+
+
 const onInput = (evt: any) => {
   keyword.value = evt.target?.value;
 };
@@ -158,6 +161,10 @@ const onEnter = () => {
   }
 };
 
+const onClickBackend = () =>{
+  showEngineList.value = false;
+}
+
 const onClear = () => {
   keyword.value = "";
 };
@@ -170,7 +177,13 @@ const onClear = () => {
   background-size: cover;
   height: 100vh;
   padding-top: 15vh;
-
+  .backend {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+  }
   .user {
     position: absolute;
     right: 20px;
@@ -266,7 +279,7 @@ const onClear = () => {
       flex-wrap: wrap;
       justify-content: flex-start;
       position: absolute;
-      top: 60px;
+      top: 48px;
       left: 0;
       background-color: #fff;
       border-radius: 2px;

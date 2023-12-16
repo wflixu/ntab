@@ -16,16 +16,16 @@
         </a>
       </template>
       <div class="item add" @click.prevent="onAdd">
-        <PlusOutlined :style="{ fontSize: '36px', color: '#08c' }" />
+        <PlusOutlined class="plus" :style="{ fontSize: '36px', color: '#08c' }" />
       </div>
     </div>
-    <a-modal v-model:open="open" title="添加" @ok="handleOk">
+    <a-modal v-model:open="open" title="添加站点" @ok="handleOk">
       <a-form
         ref="formRef"
         :model="formState"
         name="basic"
-        :label-col="{ span: 6 }"
-        :wrapper-col="{ span: 16 }"
+        :label-col="{ span: 3 }"
+        :wrapper-col="{ span: 20 }"
         autocomplete="off"
       >
         <a-form-item
@@ -50,32 +50,14 @@
 <script setup lang="ts">
 import { ref, onMounted,reactive, toRaw } from "vue";
 import {PlusOutlined,CloseOutlined}   from '@ant-design/icons-vue'
-import npm from "./../../assets/search/logo-npm.png";
 import type { ISite, ISiteFormState } from "./type";
 import {useLocalStorage} from '@vueuse/core'
-
+import {faviconURL} from './../../shared/index'
 
 const open = ref(false);
 
-const sites = useLocalStorage<ISite[]>('my-sites',[{
-    title: "npm",
-    href: "https://www.npmjs.com/",
-    src: "",
-  },
-  {
-    title: "npmmirror",
-    href: "https://npmmirror.com/",
-    src: "",
-  },
-  {
-    title: "一言",
-    href: "https://yiyan.baidu.com/",
-    src: "",
-  },])
+const sites = useLocalStorage<ISite[]>('my-sites',[])
 
-// const sites = ref<ISite[]>([
-
-// ]);
 
 const onClose = (site:ISite) =>{
   sites.value = sites.value.filter(item=> item.href !== site.href)
@@ -87,12 +69,11 @@ const onAdd = () =>{
 }
 
 const formState = reactive<ISiteFormState>({
-  href: 'https://www.typescriptlang.org/',
-  title: 'TS',
+  href: '',
+  title: '',
 });
 
 const formRef = ref();
-
 
 const handleOk = () =>{
   formRef.value
@@ -110,46 +91,33 @@ const handleOk = () =>{
         open.value = false;
         formRef.value.resetFields()
       } else {
-        
       }
-
-    })
-    .catch(error => {
-      console.log('error', error);
+    }).catch((error:any) => {
+      console.warn('error', error);
     });
 }
 
-
-const faviconURL = (u: string): string => {
-  if(!chrome?.runtime?.getURL) {
-    return npm
-  }
-  // @ts-nocheck
-  console.log(u)
-  const url =  new URL(chrome.runtime.getURL("/_favicon/"));
-  url.searchParams.set("pageUrl", u); // this encodes the URL as well
-  url.searchParams.set("size", "32");
-  return url.toString();
-};
-
 onMounted(() => {
   sites.value.forEach((item) => {
-
-    item.src = faviconURL(item.href)?? npm;
-    console.log(item.src)
+    if(!item.src) {
+      item.src = faviconURL(item.href);
+    }
   });
 });
 </script>
 
 <style scoped lang="postcss">
 .web-navi {
-  padding: 8px;
-  margin-top: 42px;
+  padding-top: 25vh;
+  padding-left: 20vw;
+  padding-right: 20vw;
 }
 .list {
+  background-color: rgba(242, 241, 240, 0.4);
+  border-radius: 8px;
   display: flex;
-  flex-wrap: nowrap;
-  justify-content: center;
+  flex-wrap: wrap;
+  justify-content: flex-start;
   gap: 36px 24px;
   .item {
     width: 120px;
@@ -180,8 +148,18 @@ onMounted(() => {
         display: flex;
       }
     }
-    &.add:hover {
-      cursor: pointer;
+    &.add {
+      padding-top: 0;
+      &:hover {
+        cursor: pointer;
+        .plus{
+          display: inline-flex;
+        }
+      }
+      .plus {
+         display: none 
+      }
+      
     }
 
     .site-title {
@@ -191,8 +169,8 @@ onMounted(() => {
       color: #333;
     }
     img {
-      height: 42px;
-      width: 42px;
+      height: 48px;
+      width: 48px;
     }
     a {
       border-radius: 12px;
