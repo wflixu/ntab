@@ -1,0 +1,30 @@
+{
+	"name": "Today New Tab Page",
+	"short_name": "ntab",
+	"version": "1.0.1",
+	"minimum_chrome_version": "90",
+	"manifest_version": 3,
+	"description": "自定义tab 页签，可以搜索",
+	"icons": {
+		"128": "icons/logo.png",
+		"48": "icons/logo.png",
+		"16": "icons/logo.png"
+	},
+	"action": {
+		"default_icon": "icons/logo.png"
+	},
+	"permissions": [
+		"bookmarks",
+		"topSites",
+		"tabs",
+		"fontSettings",
+		"sessions"
+	],
+	"chrome_url_overrides": {
+		"newtab": "index.html"
+	},
+	"options_ui": {
+		"page": "index.html?options",
+		"open_in_tab": true
+	}
+}
