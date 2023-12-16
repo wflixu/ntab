@@ -52,7 +52,7 @@
         </ul>
       </div>
     </div>
-    <!-- <WebNavi/> -->
+    <WebNavi/>
   </div>
 </template>
 
