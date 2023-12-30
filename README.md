@@ -23,6 +23,10 @@ pnpm build
 ![步骤-1](./public/imgs/step-2.jpg)
 
 
+## 最近更新
+### v 1.1.0
+[feat] 添加书签
+![书签](./public/imgs/bookmark.jpg)
 
 # 其他
 

@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div class="backend" @click="onClickBackend">
+    <div class="backend" @click="onClickBackend" v-if="layoutStore.showBackend">
 
     </div>
     <div class="box">
@@ -12,7 +12,7 @@
           @input="onInput"
           @keyup.enter="onEnter"
         />
-        <div class="search-selector" @click.stop="showEngineList = true">
+        <div class="search-selector" @click.stop="onClickChangeSearch">
           <template v-if="currentEngine">
             <img
               :src="currentEngine.img"
@@ -56,6 +56,7 @@
       </div>
     </div>
     <WebNavi/>
+    <BookMarks/>
   </div>
 </template>
 
@@ -71,7 +72,11 @@ import douban from "./../../assets/search/logo-douban.png";
 import movie from "./../../assets/search/logo-douban-movie.png";
 import cargo from "./../../assets/search/logo-cargo.png";
 import WebNavi from './WebNavi.vue'
+import BookMarks from "./BookMarks.vue";
 
+import {useLayoutStore} from '@/stores/layout'
+
+const layoutStore= useLayoutStore();
 
 let keyword = ref("");
 let storage = window.localStorage.getItem("engine");
@@ -145,7 +150,10 @@ const onClickEngine = (item: any) => {
   window.localStorage.setItem("engine", item.id);
   showEngineList.value = false;
 };
-
+const onClickChangeSearch =  () =>{
+  showEngineList.value = true;
+  layoutStore.toggleShowBackend(true);
+}
 
 const onInput = (evt: any) => {
   keyword.value = evt.target?.value;
@@ -163,6 +171,8 @@ const onEnter = () => {
 
 const onClickBackend = () =>{
   showEngineList.value = false;
+  layoutStore.toggleShowBookmark(false)
+  layoutStore.toggleShowBackend(false)
 }
 
 const onClear = () => {
