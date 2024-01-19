@@ -71,6 +71,7 @@ import toutiao from "./../../assets/search/logo-toutiao.png";
 import douban from "./../../assets/search/logo-douban.png";
 import movie from "./../../assets/search/logo-douban-movie.png";
 import cargo from "./../../assets/search/logo-cargo.png";
+import pypi from "./../../assets/search/logo-pypi.png";
 import WebNavi from './WebNavi.vue'
 import BookMarks from "./BookMarks.vue";
 
@@ -136,6 +137,12 @@ const engineList = ref<Engine[]>([
     img: cargo,
     target: `https://crates.io/search?q=`,
     id: "cargo",
+  },
+  {
+    name: "PyPi",
+    img: pypi,
+    target: `https://pypi.org/search/?q=`,
+    id: "pypi",
   },
 ]);
 let currentEngine = computed(() => {
