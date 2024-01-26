@@ -1,7 +1,7 @@
 {
 	"name": "Today New Tab Page",
 	"short_name": "ntab",
-	"version": "1.1.2",
+	"version": "1.2.0",
 	"minimum_chrome_version": "90",
 	"manifest_version": 3,
 	"description": "自定义tab 页签，可以搜索",

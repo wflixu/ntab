@@ -113,7 +113,7 @@ onMounted(() => {
   padding-right: 20vw;
 }
 .list {
-  background-color: rgba(242, 241, 240, 0.4);
+  background-color: rgba(242, 241, 240, 0.6);
   border-radius: 8px;
   display: flex;
   flex-wrap: wrap;
