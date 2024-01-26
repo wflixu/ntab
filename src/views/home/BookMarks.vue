@@ -1,21 +1,11 @@
 <template>
-  <div
-    class="bookmarks"
-    :class="{
-      expend: expend,
-    }"
-  >
+  <div class="bookmarks" :class="{
+    expend: expend,
+  }">
     <div v-if="expend" class="tree-box">
-      <a-directory-tree
-        v-model:expandedKeys="expandedKeys"
-        v-model:selectedKeys="selectedKeys"
-        multiple
-        :fieldNames="{
-          url: 'key',
-        }"
-        :tree-data="treeData"
-        @select="onSelect"
-      ></a-directory-tree>
+      <a-directory-tree v-model:expandedKeys="expandedKeys" v-model:selectedKeys="selectedKeys" multiple :fieldNames="{
+        url: 'key',
+      }" :tree-data="treeData" @select="onSelect"></a-directory-tree>
     </div>
     <div class="icon expend" v-else @click="onExpend">
       <MenuUnfoldOutlined :style="iconStyle" />
@@ -29,20 +19,23 @@ import { MenuUnfoldOutlined, MenuFoldOutlined } from "@ant-design/icons-vue";
 import type { TreeProps } from "ant-design-vue";
 import type { DataNode } from "ant-design-vue/es/tree";
 
-import {useLayoutStore} from '@/stores/layout'
+import { useLayoutStore } from '@/stores/layout'
 
-const layoutStore= useLayoutStore();
-const expend = computed(()=>{
-    return layoutStore.showBookmark;
+const layoutStore = useLayoutStore();
+const expend = computed(() => {
+  return layoutStore.showBookmark;
 });
 
 const expandedKeys = ref<string[]>([]);
 const selectedKeys = ref<string[]>([]);
-let  treeData:any[] = []
-chrome.bookmarks.getTree((tree) => {
+let treeData: any[] = []
+if (chrome.bookmarks) {
+  chrome.bookmarks.getTree((tree) => {
     // @ts-nocheck
     treeData = (tree[0].children as chrome.bookmarks.BookmarkTreeNode[])[0].children ?? [];
-});
+  });
+}
+
 
 const iconStyle = {
   fontSize: "24px",
@@ -50,13 +43,13 @@ const iconStyle = {
 };
 
 const onExpend = () => {
-   layoutStore.toggleShowBookmark();
-   layoutStore.toggleShowBackend(true);
+  layoutStore.toggleShowBookmark();
+  layoutStore.toggleShowBackend(true);
 };
-const onSelect = (keys: any, {node, children}: any) =>{
-    if(!children && node.dataRef.url ){
-        window.open(node.dataRef.url,'_blank')
-    }
+const onSelect = (keys: any, { node, children }: any) => {
+  if (!children && node.dataRef.url) {
+    window.open(node.dataRef.url, '_blank')
+  }
 }
 </script>
 
@@ -68,6 +61,7 @@ const onSelect = (keys: any, {node, children}: any) =>{
   width: 42px;
   height: 42px;
 }
+
 .bookmarks.expend {
   width: 300px;
   height: 80vh;
@@ -75,6 +69,7 @@ const onSelect = (keys: any, {node, children}: any) =>{
   border-radius: 4px;
   box-shadow: 0 0 5px #aaa;
 }
+
 .tree-box {
   height: 100%;
   overflow-x: hidden;
@@ -92,6 +87,7 @@ const onSelect = (keys: any, {node, children}: any) =>{
   width: 32px;
   height: 32px;
 }
+
 .icon.close {
   right: 0;
   left: auto;

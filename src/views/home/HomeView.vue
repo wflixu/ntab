@@ -57,6 +57,7 @@
     </div>
     <WebNavi/>
     <BookMarks/>
+    <Settings />
   </div>
 </template>
 
@@ -74,6 +75,7 @@ import cargo from "./../../assets/search/logo-cargo.png";
 import pypi from "./../../assets/search/logo-pypi.png";
 import WebNavi from './WebNavi.vue'
 import BookMarks from "./BookMarks.vue";
+import Settings from "../settings/Settings.vue";
 
 import {useLayoutStore} from '@/stores/layout'
 
@@ -88,6 +90,12 @@ let showEngineList = ref(false);
 const showClear = computed(() => {
   return keyword.value.length > 0;
 });
+
+
+
+const bgurl = computed(()=>{
+  return `url(${layoutStore.bgurl})`
+})
 
 const engineList = ref<Engine[]>([
   {
@@ -187,10 +195,10 @@ const onClear = () => {
 };
 </script>
 
-<style scoped lang="postcss">
+<style scoped >
 .page {
   position: relative;
-  background-image: url("./../../assets/imgs/bg.jpg");
+  background-image: v-bind("bgurl");
   background-size: cover;
   height: 100vh;
   padding-top: 15vh;
