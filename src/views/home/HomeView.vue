@@ -56,8 +56,9 @@
       </div>
     </div>
     <WebNavi/>
-    <BookMarks/>
+
     <Settings />
+    <CommandTips/>
   </div>
 </template>
 
@@ -74,9 +75,8 @@ import movie from "./../../assets/search/logo-douban-movie.png";
 import cargo from "./../../assets/search/logo-cargo.png";
 import pypi from "./../../assets/search/logo-pypi.png";
 import WebNavi from './WebNavi.vue'
-import BookMarks from "./BookMarks.vue";
 import Settings from "../settings/Settings.vue";
-
+import CommandTips from "./CommandTips.vue";
 import {useLayoutStore} from '@/stores/layout'
 
 const layoutStore= useLayoutStore();

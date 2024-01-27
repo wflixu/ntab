@@ -2,7 +2,7 @@
 
 自定义tab 导航页，自定义搜索，效果如下
 
-![步骤-1](./public/imgs/preview.jpg)
+![步骤-1](./public/imgs/preview.png)
 
 # 使用方法
 
