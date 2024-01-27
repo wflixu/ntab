@@ -19,8 +19,7 @@
 .command-tips {
     position: fixed;
     top:16px;
-    right: 24px;
-
+    left: 24px;
 }
 .item {
     height: 32px;
