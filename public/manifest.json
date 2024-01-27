@@ -1,10 +1,10 @@
 {
 	"name": "Today New Tab Page",
 	"short_name": "ntab",
-	"version": "1.2.0",
+	"version": "1.2.1",
 	"minimum_chrome_version": "90",
 	"manifest_version": 3,
-	"description": "自定义tab 页签，可以搜索",
+	"description": "自定义tab 页签, 聚合N多搜索，可以添加站点，可以换壁纸",
 	"icons": {
 		"128": "icons/logo.png",
 		"48": "icons/logo.png",
