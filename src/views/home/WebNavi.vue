@@ -106,22 +106,28 @@ onMounted(() => {
 });
 </script>
 
-<style scoped lang="postcss">
+<style scoped >
 .web-navi {
   padding-top: 25vh;
-  padding-left: 20vw;
-  padding-right: 20vw;
+  /* padding-left: 20vw;
+  padding-right: 20vw; */
+  display: flex;
+  justify-content: center;
 }
 .list {
+  --item-width: 120px;
+  --item-gap: 16px;
   background-color: rgba(242, 241, 240, 0.6);
   border-radius: 8px;
   display: flex;
   flex-wrap: wrap;
   justify-content: flex-start;
-  gap: 36px 24px;
+  gap: var(--item-gap);
+  width: calc((var(--item-width) + var(--item-gap)) * 8 - var(--item-gap));
+  
   .item {
-    width: 120px;
-    height: 120px;
+    width: var(--item-width);
+    height: var(--item-width);
     padding-top: 16px;
     position: relative;
     border-radius: 4px;
@@ -186,4 +192,32 @@ onMounted(() => {
     }
   }
 }
+
+
+@media screen and (min-width: 1980px) {
+  .list {
+    width:   calc((var(--item-width) + var(--item-gap)) * 12 - var(--item-gap));;
+  }
+}
+@media screen and (min-width: 3200px) {
+  .list {
+    width:   calc((var(--item-width) + var(--item-gap)) * 16 - var(--item-gap));;
+  }
+}
+@media screen and (max-width: 1280px) {
+  .list {
+    width:   calc((var(--item-width) + var(--item-gap)) * 6 - var(--item-gap));;
+  }
+}
+@media screen and (max-width: 1024px) {
+  .list {
+    width:   calc((var(--item-width) + var(--item-gap)) * 5 - var(--item-gap));;
+  }
+}
+@media screen and (max-width: 768px) {
+  .list {
+    width:   calc((var(--item-width) + var(--item-gap)) * 4 - var(--item-gap));;
+  }
+}
+
 </style>
