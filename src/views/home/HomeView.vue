@@ -5,60 +5,46 @@
     </div>
     <div class="box">
       <div class="search-input">
-        <input
-          type="text"
-          :value="keyword"
-          placeholder="请输入关键字"
-          @input="onInput"
-          @keyup.enter="onEnter"
-        />
+        <form @submit="onEnter">
+          <input type="text" :value="keyword" placeholder="请输入关键字" @input="onInput" @keyup.enter="" />
+        </form>
+
         <div class="search-selector" @click.stop="onClickChangeSearch">
           <template v-if="currentEngine">
-            <img
-              :src="currentEngine.img"
-              :alt="currentEngine.name"
-              class="logo curr"
-            />
+            <img :src="currentEngine.img" :alt="currentEngine.name" class="logo curr" />
           </template>
           <div class="arrow">
-            <svg
-              class="arrow-icon"
-              width="10"
-              height="6"
-              viewBox="0 0 10 6"
-              fill="#999"
-              xmlns="http://www.w3.org/2000/svg"
-            >
+            <svg class="arrow-icon" width="10" height="6" viewBox="0 0 10 6" fill="#999"
+              xmlns="http://www.w3.org/2000/svg">
               <path
-                d="M5.34919 5.71075C5.15303 5.91082 4.83089 5.91082 4.63494 5.71075L0.627304 1.61875C0.317409 1.30233 0.541867 0.768799 0.984877 0.768799L9.0045 0.7688C9.44751 0.7688 9.6714 1.30233 9.36117 1.61875L5.34919 5.71075Z"
-              ></path>
+                d="M5.34919 5.71075C5.15303 5.91082 4.83089 5.91082 4.63494 5.71075L0.627304 1.61875C0.317409 1.30233 0.541867 0.768799 0.984877 0.768799L9.0045 0.7688C9.44751 0.7688 9.6714 1.30233 9.36117 1.61875L5.34919 5.71075Z">
+              </path>
             </svg>
           </div>
         </div>
-        <div class="clear" v-if="showClear" @click="onClear">x</div>
+        <div class="clear" v-if="showClear" @click="onClear">
+          <svg width="800px" height="800px" viewBox="0 0 24 24"  xmlns="http://www.w3.org/2000/svg">
+            <path fill-rule="evenodd" clip-rule="evenodd"
+              d="M5.29289 5.29289C5.68342 4.90237 6.31658 4.90237 6.70711 5.29289L12 10.5858L17.2929 5.29289C17.6834 4.90237 18.3166 4.90237 18.7071 5.29289C19.0976 5.68342 19.0976 6.31658 18.7071 6.70711L13.4142 12L18.7071 17.2929C19.0976 17.6834 19.0976 18.3166 18.7071 18.7071C18.3166 19.0976 17.6834 19.0976 17.2929 18.7071L12 13.4142L6.70711 18.7071C6.31658 19.0976 5.68342 19.0976 5.29289 18.7071C4.90237 18.3166 4.90237 17.6834 5.29289 17.2929L10.5858 12L5.29289 6.70711C4.90237 6.31658 4.90237 5.68342 5.29289 5.29289Z"
+               />
+          </svg>
+        </div>
         <ul class="engine-list" v-if="showEngineList">
           <template v-for="item in engineList">
-            <li
-              class="item"
-              :class="{ active: engine == item.id }"
-              @click="onClickEngine(item)"
-            >
+            <li class="item" :class="{ active: engine == item.id }" @click="onClickEngine(item)">
               <img :src="item.img" :alt="item.name" class="logo" />
               <span class="title">{{ item.name }}</span>
-              <img
-                v-if="engine == item.id"
-                class="icon-checked"
-                src="https://lf-cdn-tos.bytescm.com/obj/static/xitu_extension/static/icon-checked.9de545ad.svg"
-              />
+              <img v-if="engine == item.id" class="icon-checked"
+                src="https://lf-cdn-tos.bytescm.com/obj/static/xitu_extension/static/icon-checked.9de545ad.svg" />
             </li>
           </template>
         </ul>
       </div>
     </div>
-    <WebNavi/>
+    <WebNavi />
 
     <Settings />
-    <CommandTips/>
+    <CommandTips />
   </div>
 </template>
 
@@ -77,9 +63,9 @@ import pypi from "./../../assets/search/logo-pypi.png";
 import WebNavi from './WebNavi.vue'
 import Settings from "../settings/Settings.vue";
 import CommandTips from "./CommandTips.vue";
-import {useLayoutStore} from '@/stores/layout'
+import { useLayoutStore } from '@/stores/layout'
 
-const layoutStore= useLayoutStore();
+const layoutStore = useLayoutStore();
 
 let keyword = ref("");
 let storage = window.localStorage.getItem("engine");
@@ -93,7 +79,7 @@ const showClear = computed(() => {
 
 
 
-const bgurl = computed(()=>{
+const bgurl = computed(() => {
   return `url(${layoutStore.bgurl})`
 })
 
@@ -165,7 +151,7 @@ const onClickEngine = (item: any) => {
   window.localStorage.setItem("engine", item.id);
   showEngineList.value = false;
 };
-const onClickChangeSearch =  () =>{
+const onClickChangeSearch = () => {
   showEngineList.value = true;
   layoutStore.toggleShowBackend(true);
 }
@@ -174,9 +160,7 @@ const onInput = (evt: any) => {
   keyword.value = evt.target?.value;
 };
 const onEnter = () => {
-  if (keyword.value.trim().length < 1) {
-    return;
-  }
+
 
   if (currentEngine) {
     let url = currentEngine?.value?.target + keyword.value;
@@ -184,7 +168,7 @@ const onEnter = () => {
   }
 };
 
-const onClickBackend = () =>{
+const onClickBackend = () => {
   showEngineList.value = false;
   layoutStore.toggleShowBookmark(false)
   layoutStore.toggleShowBackend(false)
@@ -202,6 +186,7 @@ const onClear = () => {
   background-size: cover;
   height: 100vh;
   padding-top: 15vh;
+
   .backend {
     position: absolute;
     top: 0;
@@ -209,6 +194,7 @@ const onClear = () => {
     left: 0;
     right: 0;
   }
+
   .user {
     position: absolute;
     right: 20px;
@@ -216,40 +202,51 @@ const onClear = () => {
     width: 120px;
     display: flex;
     align-items: center;
+
     .avatar {
       width: 50px;
       height: 50px;
       border-radius: 50%;
       overflow: hidden;
     }
+
     .name {
       margin-left: 12px;
       font-size: 18px;
     }
   }
+
   .box {
-    
+
     display: flex;
     justify-content: center;
   }
 
   .search-input {
-    height: 40px;
     width: 40vw;
     position: relative;
 
-    input {
+    form {
       width: 100%;
-      height: 100%;
-      padding-left: 72px;
-      padding-right: 40px;
-      font-size: 20px;
+      display: flex;
+
+      input {
+        /* background-color: aqua; */
+        flex: 1;
+        height: 42px;
+        padding-left: 72px;
+        padding-right: 40px;
+        font-size: 20px;
+        outline: invert;
+        border: 1px solid #aaa;
+        border-radius: 4px;
+      }
     }
 
     .clear {
       position: absolute;
       right: 16px;
-      top: 8px;
+      top: 10px;
       height: 20px;
       width: 20px;
       background-color: #c9cdd4;
@@ -258,10 +255,12 @@ const onClear = () => {
       display: inline-flex;
       justify-content: center;
       align-items: center;
+      font-size: 16px;
+      vertical-align: middle;
 
-      &:hover {
+      &:hover svg {
         cursor: pointer;
-        color: #1e80ff;
+        fill: #1e80ff;
       }
     }
 
@@ -366,5 +365,4 @@ const onClear = () => {
       }
     }
   }
-}
-</style>
+}</style>
