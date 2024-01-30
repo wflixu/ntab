@@ -2,7 +2,10 @@
 
 自定义tab 导航页，自定义搜索，效果如下
 
-![步骤-1](./public/imgs/preview.png)
+![总览](./public/imgs/preview.png)
+
+
+![背景设置](./public/imgs/background-select.png)
 
 # 使用方法
 
