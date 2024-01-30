@@ -6,7 +6,7 @@
                 <div class="selection" @click="selectBg(item)">
                     <CheckCircleOutlined :style="{
                         'fontSize': '28px',
-                        'color': curBg === item ? '#6081FC' : '#ddd'
+                        'color': curBg === item ? '#CB591A' : '#ddd'
                     }" />
                 </div>
             </div>

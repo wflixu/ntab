@@ -10,6 +10,7 @@ import douban from "./../assets/search/logo-douban.png";
 import movie from "./../assets/search/logo-douban-movie.png";
 import cargo from "./../assets/search/logo-cargo.png";
 import pypi from "./../assets/search/logo-pypi.png";
+import swift from "./../assets/search/logo-swift.png";
 
 const faviconURL = (u: string, size = "48"): string => {
   if (!chrome?.runtime?.getURL) {
@@ -76,6 +77,12 @@ const SEARCH_ENGINE_LIST: Engine[] = [
     img: pypi,
     target: `https://pypi.org/search/?q=`,
     id: "pypi",
+  },
+  {
+    name: "SwiftPM",
+    img: swift,
+    target: `https://swiftpackageindex.com/search?query=`,
+    id: "swift",
   },
 ]
 
