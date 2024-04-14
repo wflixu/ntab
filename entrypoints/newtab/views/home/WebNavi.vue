@@ -92,6 +92,12 @@ const handleOk = () => {
       console.warn('error', error);
     });
 }
+
+type HistoryItem = {
+  url: string;
+  title: string;
+  visitCount: number;
+}
 // 
 let microsecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
 let oneWeekAgo = new Date().getTime() - microsecondsPerWeek;
@@ -99,16 +105,26 @@ const initBookmarks = () => {
   browser.history.search({ text: '', startTime: oneWeekAgo }).then((items) => {
     let count = 1
     // @ts-ignore
-    items.sort((a, b) => { return b.visitCount - a.visitCount }).forEach((item: any) => {
+    // 把url 转换成url 对象，再根据url 对象的origin 合并，相同的origin 合并, 访问次方累加，
+    let urlMap: { [key: string]: HistoryItem } = {}
+      (items as HistoryItem[]).forEach((item: HistoryItem) => {
+        let url = new URL(item.url)
+        if (url.origin in urlMap) {
+          urlMap[url.origin].visitCount = urlMap[url.origin].visitCount + item.visitCount
+        } else {
+          urlMap[url.origin] = item
+        }
+      })
+    Object.entries(urlMap).sort((a, b) => { return b[1].visitCount - a[1].visitCount }).forEach(([origin,item]) => {
       if (count >= 8 || !item.url.startsWith('http') || item.visitCount < 3) {
         return
       } else {
         let url = new URL(item.url)
         console.log(url, item.visitCount)
         sites.value.push({
-          title: url.hostname.replace('www.', '').replace('.com', ''),
-          href: url.href,
-          src: faviconURL(url.origin)
+          title: item.title,
+          href: origin,
+          src: faviconURL(origin)
         })
         count++
       }
