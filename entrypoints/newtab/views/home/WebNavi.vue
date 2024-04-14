@@ -6,12 +6,7 @@
           <span class="close" @click.prevent="onClose(site)">
             <CloseOutlined />
           </span>
-          <img
-            draggable="false"
-            class="favicon-overlay"
-            :alt="site.title"
-            :src="site.src"
-          />
+          <img draggable="false" class="favicon-overlay" :alt="site.title" :src="site.src" />
           <div class="site-title">{{ site.title }}</div>
         </a>
       </template>
@@ -20,26 +15,12 @@
       </div>
     </div>
     <a-modal v-model:open="open" title="添加站点" @ok="handleOk">
-      <a-form
-        ref="formRef"
-        :model="formState"
-        name="basic"
-        :label-col="{ span: 3 }"
-        :wrapper-col="{ span: 20 }"
-        autocomplete="off"
-      >
-        <a-form-item
-          label="名称"
-          name="title"
-          :rules="[{ required: true, message: 'Please input site title' }]"
-        >
+      <a-form ref="formRef" :model="formState" name="basic" :label-col="{ span: 3 }" :wrapper-col="{ span: 20 }"
+        autocomplete="off">
+        <a-form-item label="名称" name="title" :rules="[{ required: true, message: 'Please input site title' }]">
           <a-input v-model:value="formState.title" />
         </a-form-item>
-        <a-form-item
-          label="地址"
-          name="href"
-          :rules="[{ required: true, message: 'Please input site href!' }]"
-        >
+        <a-form-item label="地址" name="href" :rules="[{ required: true, message: 'Please input site href!' }]">
           <a-input v-model:value="formState.href" />
         </a-form-item>
       </a-form>
@@ -48,24 +29,37 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted,reactive, toRaw } from "vue";
-import {PlusOutlined,CloseOutlined}   from '@ant-design/icons-vue'
+import { ref, onMounted, reactive, toRaw } from "vue";
+import { PlusOutlined, CloseOutlined } from '@ant-design/icons-vue'
 import type { ISite, ISiteFormState } from "./type";
-import {useLocalStorage} from '@vueuse/core'
-import {faviconURL} from './../../shared/index'
+import { useLocalStorage } from '@vueuse/core'
+import { faviconURL } from './../../shared/index'
+import { browser } from 'wxt/browser'
+
+
 
 const open = ref(false);
 
-const sites = useLocalStorage<ISite[]>('my-sites',[])
+const sites = useLocalStorage<ISite[]>('my-sites', [])
 
 
-const onClose = (site:ISite) =>{
-  sites.value = sites.value.filter(item=> item.href !== site.href)
+const onClose = (site: ISite) => {
+  sites.value = sites.value.filter(item => item.href !== site.href)
 }
 
 
-const onAdd = () =>{
+const onAdd = () => {
   open.value = true
+}
+const addBookmark = async (title: string, href: string) => {
+  let bookmarkNodes = await browser.bookmarks.getTree()
+  // @ts-ignore
+  let bookmarknodeID = bookmarkNodes[0].children[0].children[0]?.id;
+  browser.bookmarks.create({
+    'parentId': bookmarknodeID ?? '1',
+    title,
+    url: href
+  })
 }
 
 const formState = reactive<ISiteFormState>({
@@ -75,38 +69,68 @@ const formState = reactive<ISiteFormState>({
 
 const formRef = ref();
 
-const handleOk = () =>{
+const handleOk = () => {
   formRef.value
     .validate()
     .then(() => {
       console.log('values', formState, toRaw(formState));
-      const {title, href} = toRaw(formState);
+      const { title, href } = toRaw(formState);
       const site = sites.value.find(item => item.href == href);
-      if(!site) {
+      if (!site) {
         sites.value.push({
-        title,
-        href,
-        src: faviconURL(href)
-      })
+          title,
+          href,
+          src: faviconURL(href)
+        })
+
         open.value = false;
         formRef.value.resetFields()
+        addBookmark(title, href)
       } else {
       }
-    }).catch((error:any) => {
+    }).catch((error: any) => {
       console.warn('error', error);
     });
+}
+// 
+let microsecondsPerWeek = 1000 * 60 * 60 * 24 * 7;
+let oneWeekAgo = new Date().getTime() - microsecondsPerWeek;
+const initBookmarks = () => {
+  browser.history.search({ text: '', startTime: oneWeekAgo }).then((items) => {
+    let count = 1
+    // @ts-ignore
+    items.sort((a, b) => { return b.visitCount - a.visitCount }).forEach((item: any) => {
+      if (count >= 8 || !item.url.startsWith('http') || item.visitCount < 3) {
+        return
+      } else {
+        let url = new URL(item.url)
+        console.log(url, item.visitCount)
+        sites.value.push({
+          title: url.hostname.replace('www.', '').replace('.com', ''),
+          href: url.href,
+          src: faviconURL(url.origin)
+        })
+        count++
+      }
+    })
+  })
+
 }
 
 onMounted(() => {
   sites.value.forEach((item) => {
-    if(!item.src) {
+    if (!item.src) {
       item.src = faviconURL(item.href);
     }
   });
+  if (sites.value.length == 0) {
+    initBookmarks();
+  }
+
 });
 </script>
 
-<style scoped >
+<style scoped>
 .web-navi {
   padding-top: 25vh;
   /* padding-left: 20vw;
@@ -114,6 +138,7 @@ onMounted(() => {
   display: flex;
   justify-content: center;
 }
+
 .list {
   --item-width: 120px;
   --item-gap: 16px;
@@ -124,7 +149,7 @@ onMounted(() => {
   justify-content: flex-start;
   gap: var(--item-gap);
   width: calc((var(--item-width) + var(--item-gap)) * 8 - var(--item-gap));
-  
+
   .item {
     width: var(--item-width);
     height: var(--item-width);
@@ -136,6 +161,7 @@ onMounted(() => {
     flex-direction: column;
     justify-content: center;
     align-items: center;
+
     .close {
       position: absolute;
       top: 4px;
@@ -147,25 +173,31 @@ onMounted(() => {
       justify-content: center;
       display: none;
     }
+
     &:hover {
       box-shadow: 0 5px 10px #999;
       background-color: #e8e8e9;
+
       .close {
         display: flex;
       }
     }
+
     &.add {
       padding-top: 0;
+
       &:hover {
         cursor: pointer;
-        .plus{
+
+        .plus {
           display: inline-flex;
         }
       }
+
       .plus {
-         display: none 
+        display: none
       }
-      
+
     }
 
     .site-title {
@@ -174,10 +206,12 @@ onMounted(() => {
       align-items: center;
       color: #333;
     }
+
     img {
       height: 48px;
       width: 48px;
     }
+
     a {
       border-radius: 12px;
       position: absolute;
@@ -187,6 +221,7 @@ onMounted(() => {
       left: 0;
       right: 0;
     }
+
     a:hover {
       cursor: pointer;
     }
@@ -196,28 +231,36 @@ onMounted(() => {
 
 @media screen and (min-width: 1980px) {
   .list {
-    width:   calc((var(--item-width) + var(--item-gap)) * 12 - var(--item-gap));;
-  }
-}
-@media screen and (min-width: 3200px) {
-  .list {
-    width:   calc((var(--item-width) + var(--item-gap)) * 16 - var(--item-gap));;
-  }
-}
-@media screen and (max-width: 1280px) {
-  .list {
-    width:   calc((var(--item-width) + var(--item-gap)) * 6 - var(--item-gap));;
-  }
-}
-@media screen and (max-width: 1024px) {
-  .list {
-    width:   calc((var(--item-width) + var(--item-gap)) * 5 - var(--item-gap));;
-  }
-}
-@media screen and (max-width: 768px) {
-  .list {
-    width:   calc((var(--item-width) + var(--item-gap)) * 4 - var(--item-gap));;
+    width: calc((var(--item-width) + var(--item-gap)) * 12 - var(--item-gap));
+    ;
   }
 }
 
+@media screen and (min-width: 3200px) {
+  .list {
+    width: calc((var(--item-width) + var(--item-gap)) * 16 - var(--item-gap));
+    ;
+  }
+}
+
+@media screen and (max-width: 1280px) {
+  .list {
+    width: calc((var(--item-width) + var(--item-gap)) * 6 - var(--item-gap));
+    ;
+  }
+}
+
+@media screen and (max-width: 1024px) {
+  .list {
+    width: calc((var(--item-width) + var(--item-gap)) * 5 - var(--item-gap));
+    ;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .list {
+    width: calc((var(--item-width) + var(--item-gap)) * 4 - var(--item-gap));
+    ;
+  }
+}
 </style>

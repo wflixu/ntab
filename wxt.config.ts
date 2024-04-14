@@ -22,6 +22,7 @@ export default defineConfig({
       "storage",
       "tabs",
       "bookmarks",
+      "history",
       "favicon",
       "topSites",
       "tabs",
