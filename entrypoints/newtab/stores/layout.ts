@@ -5,7 +5,7 @@ import { useLocalStorage } from '@vueuse/core'
 
 const cachedBgUrl = window.localStorage.getItem('bg')
 
-const cachedFolder = window.localStorage.getItem('sync-bookmark-folder')
+
 
 
 export const useLayoutStore = defineStore("layout", () => {
@@ -25,11 +25,10 @@ export const useLayoutStore = defineStore("layout", () => {
     showBackend.value = v ?? !showBackend.value;
   };
 
-  const syncBookmarkFolder = ref<string>(cachedFolder ?? "ntab");
+  const syncBookmarkFolder = useLocalStorage<string>('sync-bookmark-folder', "ntab");
 
   const setSyncBookmarkFolder = (folder: string) => {
     syncBookmarkFolder.value = folder;
-    window.localStorage.setItem('sync-bookmark-folder', folder)
   }
 
 

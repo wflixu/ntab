@@ -44,7 +44,6 @@ const sites = useLocalStorage<ISite[]>('my-sites', [])
 const layoutStore = useLayoutStore()
 
 
-const syncFolder = ref(layoutStore.syncBookmarkFolder)
 
 
 
@@ -66,7 +65,7 @@ const syncFromBookmarks = async () => {
         // browser.bookmarks.create({ title: 'ntab',}).then((newFolder) => {
         //     console.log(newFolder)
         // })
-        const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder.value })
+        const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
         if (results.length > 0) {
             const ntabFolder = results[0]
             browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
@@ -74,10 +73,7 @@ const syncFromBookmarks = async () => {
                 console.log(sites.value)
                 sites.value = []
                 children.forEach((child) => {
-                    if (child.type !== 'bookmark') {
-                        return
-                    }
-
+                    
                     sites.value.push({ title: child.title, href: child.url!, src: faviconURL(child.url!) })
 
                 })
@@ -92,7 +88,7 @@ const syncFromBookmarks = async () => {
 }
 
 const uploadBookmarks = async () => {
-    const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder.value })
+    const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
     if (results.length > 0) {
         const ntabFolder = results[0]
         browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
@@ -117,7 +113,7 @@ const uploadBookmarks = async () => {
 
 
     } else {
-        message.error(`No ${layoutStore.syncBookmarkFolder.value} folder found in bookmarks`)
+        message.error(`No ${layoutStore.syncBookmarkFolder} folder found in bookmarks`)
         console.log(sites.value)
     }
 }

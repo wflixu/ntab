@@ -54,18 +54,13 @@ const onAdd = () => {
   open.value = true
 }
 const addBookmark = async (title: string, href: string) => {
-  const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder.value })
+  const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
         if (results.length > 0) {
             const ntabFolder = results[0]
             browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
                 console.log(children)
                 console.log(sites.value)
-                let index = children.findIndex((child) => {
-                    if (child.title == title) {
-                        console.log('exist')
-                        return true
-                    }
-                });
+                let index = children.findIndex((child) => child.title == title);
                 if (index == -1) {
                     browser.bookmarks.create({
                         parentId: ntabFolder.id,
@@ -73,7 +68,7 @@ const addBookmark = async (title: string, href: string) => {
                         url: href
                     })
                 } else {
-                    console.log('exist')
+                    message.info('Bookmark already exists')
                 }
                 
             })
@@ -103,7 +98,7 @@ const handleOk = () => {
           href,
           src: faviconURL(href)
         })
-        if(layoutStore.syncBookmark.value) {
+        if(layoutStore.syncBookmark) {
           addBookmark(title, href)
         }
 

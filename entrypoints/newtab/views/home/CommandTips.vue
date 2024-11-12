@@ -5,6 +5,10 @@
              <span>⌘ + ⇧ + B</span>
         </div>
         <div class="item">
+             <span>管理书签</span>
+             <span>⌘ + ⎇ + B</span>
+        </div>
+        <div class="item">
              <span>历史记录</span>
              <span>⌘ + Y</span>
         </div>
