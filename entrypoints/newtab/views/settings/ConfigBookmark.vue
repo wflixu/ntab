@@ -1,8 +1,7 @@
 <template>
     <div class="config-bookmark">
         <h2>
-            <a-checkbox v-model:checked="layoutStore.syncBookmark">sync to bookmarks when add or remove a
-                site</a-checkbox>
+            <a-checkbox v-model:checked="layoutStore.syncBookmark">是否在新增站点的时候同步到书签</a-checkbox>
         </h2>
         <div class="row">
             <a-input style="width: 360px;" v-model:value="layoutStore.syncBookmarkFolder" size="large"
@@ -18,7 +17,7 @@
                     <template #icon>
                         <UploadOutlined />
                     </template>
-                    Upload Bookmarks
+                    Sync Bookmarks
                 </a-button>
             </div>
 
@@ -51,10 +50,7 @@ const syncFromBookmarks = async () => {
 
     if (browser.bookmarks) {
 
-        //     browser.bookmarks.getTree((tree) => {
-
-        //         console.log(tree)
-        //     });
+       
         browser.bookmarks.getTree().then(([tree]) => {
             console.log(tree)
         })
@@ -73,7 +69,7 @@ const syncFromBookmarks = async () => {
                 console.log(sites.value)
                 sites.value = []
                 children.forEach((child) => {
-                    
+
                     sites.value.push({ title: child.title, href: child.url!, src: faviconURL(child.url!) })
 
                 })
@@ -89,33 +85,32 @@ const syncFromBookmarks = async () => {
 
 const uploadBookmarks = async () => {
     const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
+    let ntabFolder: Bookmarks.BookmarkTreeNode | undefined;
     if (results.length > 0) {
-        const ntabFolder = results[0]
-        browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
-            console.log(children)
-            console.log(sites.value)
-            sites.value.forEach((site) => {
-                const index = children.findIndex((c) => c.title === site.title)
-                if (index === -1) {
-                    browser.bookmarks.create({
-                        title: site.title,
-                        url: site.href,
-                        parentId: ntabFolder.id,
-                    })
-                } else {
-                    browser.bookmarks.update(children[index].id, {
-                        title: site.title,
-                        url: site.href,
-                    })
-                }
-            })
-        })
-
-
+        ntabFolder = results[0]
     } else {
-        message.error(`No ${layoutStore.syncBookmarkFolder} folder found in bookmarks`)
-        console.log(sites.value)
+        ntabFolder = await browser.bookmarks.create({ title: layoutStore.syncBookmarkFolder })
     }
+
+    browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
+        console.log(children)
+        console.log(sites.value)
+        sites.value.forEach((site) => {
+            const index = children.findIndex((c) => c.title === site.title)
+            if (index === -1) {
+                browser.bookmarks.create({
+                    title: site.title,
+                    url: site.href,
+                    parentId: ntabFolder.id,
+                })
+            } else {
+                browser.bookmarks.update(children[index].id, {
+                    title: site.title,
+                    url: site.href,
+                })
+            }
+        })
+    })
 }
 
 
