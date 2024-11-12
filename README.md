@@ -5,7 +5,7 @@
 ![总览](./public/imgs/preview.png)
 
 
-![背景设置](./public/imgs/background-select.png)
+![背景设置](./public/imgs/background.png)
 
 # 使用方法
 
@@ -27,10 +27,11 @@ pnpm build
 
 
 ## 最近更新
-### v 1.1.0
-[feat] 添加书签
-![书签](./public/imgs/bookmark.jpg)
+### v 1.4
+[feat] add bookmark sync
+
+![书签](./public/imgs/sync-bookmark.png)
 
 # 其他
 
-欢迎pr
+欢迎 PR star
