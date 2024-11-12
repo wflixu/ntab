@@ -35,8 +35,10 @@ import type { ISite, ISiteFormState } from "./type";
 import { useLocalStorage } from '@vueuse/core'
 import { faviconURL } from './../../shared/index'
 import { browser } from 'wxt/browser'
+import { message } from "ant-design-vue";
+import { useLayoutStore } from '../../stores/layout'
 
-
+const layoutStore = useLayoutStore()
 
 const open = ref(false);
 
@@ -52,14 +54,33 @@ const onAdd = () => {
   open.value = true
 }
 const addBookmark = async (title: string, href: string) => {
-  let bookmarkNodes = await browser.bookmarks.getTree()
-  // @ts-ignore
-  let bookmarknodeID = bookmarkNodes[0].children[0].children[0]?.id;
-  browser.bookmarks.create({
-    'parentId': bookmarknodeID ?? '1',
-    title,
-    url: href
-  })
+  const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder.value })
+        if (results.length > 0) {
+            const ntabFolder = results[0]
+            browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
+                console.log(children)
+                console.log(sites.value)
+                let index = children.findIndex((child) => {
+                    if (child.title == title) {
+                        console.log('exist')
+                        return true
+                    }
+                });
+                if (index == -1) {
+                    browser.bookmarks.create({
+                        parentId: ntabFolder.id,
+                        title: title,
+                        url: href
+                    })
+                } else {
+                    console.log('exist')
+                }
+                
+            })
+        } else {
+            message.error('No ntab folder found in bookmarks')
+            console.log(sites.value)
+        }
 }
 
 const formState = reactive<ISiteFormState>({
@@ -82,10 +103,13 @@ const handleOk = () => {
           href,
           src: faviconURL(href)
         })
+        if(layoutStore.syncBookmark.value) {
+          addBookmark(title, href)
+        }
 
         open.value = false;
         formRef.value.resetFields()
-        addBookmark(title, href)
+        
       } else {
       }
     }).catch((error: any) => {
@@ -106,16 +130,16 @@ const initBookmarks = () => {
     let count = 1
     // @ts-ignore
     // 把url 转换成url 对象，再根据url 对象的origin 合并，相同的origin 合并, 访问次方累加，
-    let urlMap: { [key: string]: HistoryItem } = {}
-      (items as HistoryItem[]).forEach((item: HistoryItem) => {
-        let url = new URL(item.url)
-        if (url.origin in urlMap) {
-          urlMap[url.origin].visitCount = urlMap[url.origin].visitCount + item.visitCount
-        } else {
-          urlMap[url.origin] = item
-        }
-      })
-    Object.entries(urlMap).sort((a, b) => { return b[1].visitCount - a[1].visitCount }).forEach(([origin,item]) => {
+    let urlMap: { [key: string]: HistoryItem } = {};
+    (items as HistoryItem[]).forEach((item: HistoryItem) => {
+      let url = new URL(item.url)
+      if (url.origin in urlMap) {
+        urlMap[url.origin].visitCount = urlMap[url.origin].visitCount + item.visitCount
+      } else {
+        urlMap[url.origin] = item
+      }
+    });
+    Object.entries(urlMap).sort((a, b) => { return b[1].visitCount - a[1].visitCount }).forEach(([origin, item]) => {
       if (count >= 8 || !item.url.startsWith('http') || item.visitCount < 3) {
         return
       } else {
@@ -139,9 +163,7 @@ onMounted(() => {
       item.src = faviconURL(item.href);
     }
   });
-  if (sites.value.length == 0) {
-    initBookmarks();
-  }
+  
 
 });
 </script>

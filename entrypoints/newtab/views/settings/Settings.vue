@@ -8,18 +8,26 @@
                 <a-tab-pane key="bg" tab="背景">
                    
                 </a-tab-pane>
+                <a-tab-pane key="bookmark" tab="书签同步">
+                   
+                </a-tab-pane>
             </a-tabs>
             <template v-if="activeKey == 'bg'">
                 <ConfigBackground />
+            </template>
+            <template v-if="activeKey == 'bookmark'">
+                <ConfigBookmark />
             </template>
         </a-drawer>
     </div>
 </template>
 
 <script setup lang="ts">
+import { ref } from "vue";
+
 import { SettingOutlined } from "@ant-design/icons-vue"
 import ConfigBackground from './ConfigBackground.vue'
-import { ref } from "vue";
+import ConfigBookmark from "./ConfigBookmark.vue";
 
 
 const open = ref<boolean>(false);
