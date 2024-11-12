@@ -1,7 +1,11 @@
 import { ref, computed } from "vue";
 import { defineStore } from "pinia";
 import defaultBgImg from '../assets/imgs/bg.jpg'
+import { useLocalStorage } from '@vueuse/core'
+
 const cachedBgUrl = window.localStorage.getItem('bg')
+
+
 
 
 export const useLayoutStore = defineStore("layout", () => {
@@ -9,6 +13,7 @@ export const useLayoutStore = defineStore("layout", () => {
   const showBackend = ref(false);
 
   const bgurl = ref(cachedBgUrl ?? defaultBgImg)
+
   const setBgurl = (url: string) => {
     bgurl.value = url;
     window.localStorage.setItem('bg', url)
@@ -19,5 +24,22 @@ export const useLayoutStore = defineStore("layout", () => {
   const toggleShowBackend = (v?: boolean) => {
     showBackend.value = v ?? !showBackend.value;
   };
-  return { showBookmark, showBackend, toggleShowBookmark, toggleShowBackend, bgurl, setBgurl };
+
+  const syncBookmarkFolder = useLocalStorage<string>('sync-bookmark-folder', "ntab");
+
+  const setSyncBookmarkFolder = (folder: string) => {
+    syncBookmarkFolder.value = folder;
+  }
+
+
+  const syncBookmark = useLocalStorage<boolean>('syncBookmark', true)
+
+  return {
+    showBookmark, showBackend, toggleShowBookmark, toggleShowBackend,
+    bgurl, setBgurl,
+    syncBookmarkFolder,
+    setSyncBookmarkFolder,
+    syncBookmark
+
+  };
 });

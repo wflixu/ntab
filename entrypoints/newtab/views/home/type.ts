@@ -20,4 +20,9 @@ export interface IBookmarkNode {
   url: string;
   title: string;
   children?: IBookmarkNode[];
+  parentId: string;
+  id: string;
+  dateAdded: number;
+  dateGroupModified?: number;
+  dateLastUsed?: number;
 }
