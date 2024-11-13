@@ -33,8 +33,7 @@ jobs:
         run: pnpm run bz # 根据项目使用的构建命令修改
 
       - name: Test
-        run: echo $GITHUB_WORKSPACE |
-          pwd
+        run: pwd
 
       - name: Get version from package.json
         id: get_version
@@ -50,9 +49,41 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ env.VERSION }} # 或者根据需要自定义 tag
-          release_name: Release ntab ${{ env.VERSION }}
+          name: Release ntab ${{ env.VERSION }}
           draft: true
           prerelease: true
           files: ./.output/ntab-${{ env.VERSION }}-chrome.zip # 修改为构建产物的路径
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Create Git Tag
+        uses: actions/github-script@v6
+        with:
+          script: |
+            const version = process.env.VERSION;
+            const tagName = `v${version}`;
+            const { data: existingTags } = await github.git.listMatchingRefs({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              ref: 'tags',
+            });
+            if (!existingTags.some(tag => tag.ref === `refs/tags/${tagName}`)) {
+              await github.git.createTag({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                tag: tagName,
+                message: `Release ${tagName}`,
+                object: context.sha,
+                type: 'commit',
+              });
+              await github.git.createRef({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                ref: `refs/tags/${tagName}`,
+                sha: context.sha,
+              });
+            } else {
+              console.log(`Tag ${tagName} already exists.`);
+            }
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
