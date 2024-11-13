@@ -1,0 +1,48 @@
+name: Release Build
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write # to be able to publish a GitHub release
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: setup pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 9
+      - name: Set up Node.js (或其他构建环境)
+        uses: actions/setup-node@v4
+        with:
+          node-version: 'lts/*' # 根据需要修改 Node.js 版本
+          cache: 'pnpm' # 使用 pnpm 加速安装依赖
+     
+      - name: Build project
+        run: pnpm run build && pnpm run zip # 根据项目使用的构建命令修改
+
+      - name: Get version from package.json
+        id: get_version
+        run: echo "VERSION=$(jq -r .version package.json)" >> $GITHUB_ENV
+
+      - uses: actions/upload-artifact@v4
+        with:
+        name: ntab-output
+        path: ./.output/ntab-${{ env.VERSION }}-chrome.zip # 修改为构建产物的路径
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ env.VERSION }} # 或者根据需要自定义 tag
+          release_name: Release ntab ${{ env.VERSION }}
+          draft: true
+          prerelease: true
+          files: ./.output/ntab-${{ env.VERSION }}-chrome.zip # 修改为构建产物的路径
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
