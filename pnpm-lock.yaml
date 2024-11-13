@@ -17,6 +17,9 @@ importers:
       ant-design-vue:
         specifier: ^4.2.6
         version: 4.2.6(vue@3.5.12(typescript@5.6.3))
+      dayjs:
+        specifier: ^1.11.13
+        version: 1.11.13
       pinia:
         specifier: ^2.2.6
         version: 2.2.6(typescript@5.6.3)(vue@3.5.12(typescript@5.6.3))

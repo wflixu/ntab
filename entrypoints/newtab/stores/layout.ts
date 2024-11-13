@@ -12,7 +12,7 @@ export const useLayoutStore = defineStore("layout", () => {
   const showBookmark = ref(false);
   const showBackend = ref(false);
 
-  const bgurl = ref(cachedBgUrl ?? defaultBgImg)
+  const bgurl = ref(cachedBgUrl ?? 'https://dailybing.com/api/v1')
 
   const setBgurl = (url: string) => {
     bgurl.value = url;

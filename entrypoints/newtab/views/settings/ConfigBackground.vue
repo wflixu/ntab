@@ -1,7 +1,22 @@
 <template>
     <div class="background">
+        <h2 class="title">当天壁纸（每日更新）</h2>
         <div class="box">
-            <div class="item" v-for="item in imgs">
+            <div class="item" >
+                <img :src="todayPic" alt="">
+                <div class="selection" @click="selectBg(todayPic)">
+                    <CheckCircleOutlined :style="{
+                        'fontSize': '28px',
+                        'color': curBg === todayPic ? '#CB591A' : '#ddd'
+                    }" />
+                </div>
+            </div>
+            
+        </div>
+        <h2 class="title">最近6天的壁纸</h2>
+        <div class="box">
+           
+            <div class="item" v-for="item in pics">
                 <img :src="item" alt="">
                 <div class="selection" @click="selectBg(item)">
                     <CheckCircleOutlined :style="{
@@ -18,9 +33,25 @@
 import { computed, reactive, ref } from 'vue';
 import { CheckCircleOutlined } from "@ant-design/icons-vue"
 import { useLayoutStore } from '../../stores/layout'
+import dayjs from 'dayjs';
 
 const layoutStore = useLayoutStore()
 const imgs = ref<string[]>([])
+
+const todayPic = 'https://dailybing.com/api/v1/'
+// 生成一个包含日期格式 为 yyyyMMdd 格式的日期数组，今天之前6天的日期
+const pics: string[] = [] = [
+    dayjs().subtract(1, 'day'),
+    dayjs().subtract(2, 'day'),
+    dayjs().subtract(3, 'day'),
+    dayjs().subtract(4, 'day'),
+    dayjs().subtract(5, 'day'),
+    dayjs().subtract(6, 'day'),
+].map((date, index) => {
+    return `${todayPic}${date.format('YYYYMMDD')}/zh-cn/UHD`
+})
+
+console.log(pics)
 
 
 const curBg = computed(() => {
@@ -54,6 +85,13 @@ fetch('https://api.wflixu.cn/chunk/imgs').then(response => {
 
 <style scoped>
 .background {
+    .title {
+        height: 56px;
+        display: flex;
+        align-items: flex-end;
+        border-bottom: 2px solid #ddd;
+        font-size: 18px;
+    }
     .box {
         display: flex;
         flex-wrap: wrap;
@@ -64,10 +102,12 @@ fetch('https://api.wflixu.cn/chunk/imgs').then(response => {
             height: 160px;
             box-shadow: 0 0 5px #999;
             position: relative;
+        
 
             img {
                 width: 100%;
                 height: 100%;
+                border-radius: 2px;
                 -o-object-fit: cover;
             }
 
