@@ -55,35 +55,3 @@ jobs:
           files: ./.output/ntab-${{ env.VERSION }}-chrome.zip # 修改为构建产物的路径
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Git Tag
-        uses: actions/github-script@v6
-        with:
-          script: |
-            const version = process.env.VERSION;
-            const tagName = `v${version}`;
-            const { data: existingTags } = await github.git.listMatchingRefs({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              ref: 'tags',
-            });
-            if (!existingTags.some(tag => tag.ref === `refs/tags/${tagName}`)) {
-              await github.git.createTag({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                tag: tagName,
-                message: `Release ${tagName}`,
-                object: context.sha,
-                type: 'commit',
-              });
-              await github.git.createRef({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                ref: `refs/tags/${tagName}`,
-                sha: context.sha,
-              });
-            } else {
-              console.log(`Tag ${tagName} already exists.`);
-            }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
