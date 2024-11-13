@@ -50,7 +50,7 @@ jobs:
         with:
           tag_name: v${{ env.VERSION }} # 或者根据需要自定义 tag
           name: Release ntab ${{ env.VERSION }}
-          draft: true
+          draft: false
           prerelease: true
           files: ./.output/ntab-${{ env.VERSION }}-chrome.zip # 修改为构建产物的路径
         env:
