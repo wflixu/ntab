@@ -19,6 +19,7 @@ pnpm build
 
 ```
 
+
 ## 在chrome/chromium 中加载
 
 ![步骤-1](./public/imgs/step-1.jpg)
@@ -27,11 +28,17 @@ pnpm build
 
 
 ## 最近更新
-### v 1.4
-[feat] add bookmark sync
 
-![书签](./public/imgs/sync-bookmark.png)
+### v 1.5
+[feat] 使用 Bing 图片 API 加载背景图片
+
+### v 1.4
+[feat] 导航地址同步到书签中
+
+
 
 # 其他
+
+bing 图片 API 使用的是 https://www.dailybing.com/api
 
 欢迎 PR star
