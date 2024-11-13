@@ -23,8 +23,15 @@ jobs:
           node-version: 'lts/*' # 根据需要修改 Node.js 版本
           cache: 'pnpm' # 使用 pnpm 加速安装依赖
      
+      - name: Install dependencies
+        run: pnpm install
+
       - name: Build project
-        run: pnpm run build && pnpm run zip # 根据项目使用的构建命令修改
+        run: pnpm run bz # 根据项目使用的构建命令修改
+
+      - name: Test
+        run: echo $GITHUB_WORKSPACE |
+          pwd
 
       - name: Get version from package.json
         id: get_version
