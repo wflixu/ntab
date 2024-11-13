@@ -3,7 +3,7 @@ name: Release Build
 on:
   push:
     branches:
-      - dev
+      - release
 
 jobs:
   build:
@@ -15,7 +15,7 @@ jobs:
         uses: actions/checkout@v2
         with:
           fetch-depth: 1 # fetch all history for all tags and branches
-          ref: dev
+          ref: release
       - name: setup pnpm
         uses: pnpm/action-setup@v2
         with:
