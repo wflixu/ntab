@@ -38,7 +38,7 @@ import dayjs from 'dayjs';
 const layoutStore = useLayoutStore()
 const imgs = ref<string[]>([])
 
-const todayPic = 'https://dailybing.com/api/v1/'
+const todayPic = 'https://api.wflixu.cn/wallpaper'
 // 生成一个包含日期格式 为 yyyyMMdd 格式的日期数组，今天之前6天的日期
 const pics: string[] = [] = [
     dayjs().subtract(1, 'day'),
@@ -48,7 +48,7 @@ const pics: string[] = [] = [
     dayjs().subtract(5, 'day'),
     dayjs().subtract(6, 'day'),
 ].map((date, index) => {
-    return `${todayPic}${date.format('YYYYMMDD')}/zh-cn/UHD`
+    return `${todayPic}/${date.format('YYYYMMDD')}/zh-cn/FHD`
 })
 
 console.log(pics)

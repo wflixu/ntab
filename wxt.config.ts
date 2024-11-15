@@ -25,8 +25,13 @@ export default defineConfig({
       "history",
       "favicon",
       "topSites",
+      "webRequest",
       "tabs",
       "sessions",
+    ],
+    "host_permissions": [
+      "*://dailybing.com/*",
+      "https://global.bing.com/*"
     ],
   },
   vite: () => ({
