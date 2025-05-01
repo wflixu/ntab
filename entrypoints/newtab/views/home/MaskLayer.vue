@@ -7,10 +7,13 @@
 import { useLayoutStore } from '../../stores/layout'
 
 const layoutStore = useLayoutStore();
-const onClickBackend = () => {
-    layoutStore.toggleShowBookmark(false)
-    layoutStore.toggleShowBackend(false)
-}
+/**
+ * Handles the click event on the backend layer.
+ */
+const onClickBackend = (): void => {
+    layoutStore.toggleShowBookmark(false);
+    layoutStore.toggleShowBackend(false);
+};
 </script>
 
 <style scoped>

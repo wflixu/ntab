@@ -17,6 +17,8 @@ pnpm install
 
 pnpm build
 
+pnpm zip
+
 ```
 
 
