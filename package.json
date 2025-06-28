@@ -1,6 +1,6 @@
 {
   "name": "ntab",
-  "version": "1.5.2",
+  "version": "1.6.0",
   "private": true,
   "type": "module",
   "scripts": {
@@ -15,15 +15,18 @@
     "postinstall": "wxt prepare"
   },
   "dependencies": {
-    "@ant-design/icons-vue": "^7.0.1",
+    "@primeuix/themes": "^1.1.2",
+    "@primevue/forms": "^4.3.5",
     "@vueuse/core": "13.4.0",
-    "ant-design-vue": "^4.2.6",
     "dayjs": "^1.11.13",
     "pinia": "3.0.3",
+    "primeicons": "^7.0.0",
+    "primevue": "^4.3.5",
     "vue": "^3.5.17",
     "vue-router": "^4.5.1"
   },
   "devDependencies": {
+    "@biomejs/biome": "2.0.6",
     "@vitejs/plugin-vue": "^6.0.0",
     "@vitejs/plugin-vue-jsx": "^5.0.0",
     "typescript": "5.8.3",

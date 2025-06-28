@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <MaskLayer/>
+    <MaskLayer />
     <SearchBox />
     <WebNavi />
     <Settings />
@@ -32,7 +32,7 @@ const onLoad = (event: Event) => {
 }
 </script>
 
-<style scoped >
+<style scoped>
 .page {
   position: relative;
   background-image: v-bind("bgurl");
@@ -40,7 +40,4 @@ const onLoad = (event: Event) => {
   height: 100vh;
   padding-top: 15vh;
 }
-
-
-
 </style>

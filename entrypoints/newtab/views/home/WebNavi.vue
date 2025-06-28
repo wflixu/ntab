@@ -4,43 +4,65 @@
       <template v-for="site in sites">
         <a class="item" target="_blank" :href="site.href">
           <span class="close" @click.prevent="onClose(site)">
-            <CloseOutlined />
+          <i class="pi pi-times" style="font-s ize: 1rem"></i>
           </span>
           <img draggable="false" class="favicon-overlay" :alt="site.title" :src="site.src" />
           <div class="site-title">{{ site.title }}</div>
         </a>
       </template>
       <div class="item add" @click.prevent="onAdd">
-        <PlusOutlined class="plus" :style="{ fontSize: '36px', color: '#08c' }" />
+         <i class="pi pi-plus plus" style="font-s ize: 1rem" :style="{ fontSize: '36px', color: '#08c' }"></i>
       </div>
     </div>
-    <a-modal v-model:open="open" title="添加站点" @ok="handleOk">
-      <a-form ref="formRef" :model="formState" name="basic" :label-col="{ span: 3 }" :wrapper-col="{ span: 20 }"
-        autocomplete="off">
-        <a-form-item label="名称" name="title" :rules="[{ required: true, message: 'Please input site title' }]">
-          <a-input v-model:value="formState.title" />
-        </a-form-item>
-        <a-form-item label="地址" name="href" :rules="[{ required: true, message: 'Please input site href!' }]">
-          <a-input v-model:value="formState.href" />
-        </a-form-item>
-      </a-form>
-    </a-modal>
+     <Toast />
+    <Dialog v-model:visible="open" header="添加站点" :modal="true" :closable="true" :style="{ width: '400px' }"
+      @hide="open = false">
+      <Form v-slot="$form" :initialValues="initialValues" :resolver="resolver" @submit="handleOk" ref="formRef">
+        <div class="form-row">
+          <label for="title" class="form-label">名称</label>
+          <div class="form-field">
+            <InputText id="title" name="title" required autofocus placeholder="请输入站点名称" class="input-full" />
+            <Message v-if="$form.title?.invalid" severity="error" size="small" variant="simple">
+              {{ $form.title.error?.message }}
+            </Message>
+          </div>
+        </div>
+        <div class="form-row">
+          <label for="href" class="form-label">地址</label>
+          <div class="form-field">
+            <InputText id="href" name="href" required placeholder="请输入站点地址" class="input-full" />
+            <Message v-if="$form.href?.invalid" severity="error" size="small" variant="simple">
+              {{ $form.href.error?.message }}
+            </Message>
+          </div>
+        </div>
+        <div class="form-actions">
+          <Button label="取消" class="btn-cancel" @click="open = false" type="button" />
+          <Button label="确定" class="btn-ok" type="submit" />
+        </div>
+      </Form>
+    </Dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, reactive, toRaw } from "vue";
-import { PlusOutlined, CloseOutlined } from '@ant-design/icons-vue'
+import { onMounted, ref, reactive } from "vue";
 import type { ISite, ISiteFormState } from "./type";
 import { useLocalStorage } from '@vueuse/core'
 import { faviconURL } from './../../shared/index'
 import { browser } from 'wxt/browser'
-import { message } from "ant-design-vue";
 import { useLayoutStore } from '../../stores/layout'
+import Dialog from 'primevue/dialog';
+import InputText from 'primevue/inputtext';
+import Button from 'primevue/button';
+import { Form } from '@primevue/forms';
+import Message from 'primevue/message';
+import { useToast } from "primevue/usetoast";
 
 const layoutStore = useLayoutStore()
 
 const open = ref(false);
+const toast = useToast();
 
 const sites = useLocalStorage<ISite[]>('my-sites', [])
 
@@ -53,63 +75,81 @@ const onClose = (site: ISite) => {
 const onAdd = () => {
   open.value = true
 }
-const addBookmark = async (title: string, href: string) => {
-  const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
-        if (results.length > 0) {
-            const ntabFolder = results[0]
-            browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
-                console.log(children)
-                console.log(sites.value)
-                let index = children.findIndex((child) => child.title == title);
-                if (index == -1) {
-                    browser.bookmarks.create({
-                        parentId: ntabFolder.id,
-                        title: title,
-                        url: href
-                    })
-                } else {
-                    message.info('Bookmark already exists')
-                }
-                
-            })
-        } else {
-            message.error('No ntab folder found in bookmarks')
-            console.log(sites.value)
-        }
-}
 
-const formState = reactive<ISiteFormState>({
+// primevue form 相关
+const initialValues = reactive<ISiteFormState>({
   href: '',
   title: '',
 });
 
+const resolver = ({ values }: { values: Record<string, any> }) => {
+  const errors: Record<string, any[]> = {};
+
+  if (!values.title) {
+    errors.title = [{ message: '请输入站点名称' }];
+  }
+  if (!values.href) {
+    errors.href = [{ message: '请输入站点地址' }];
+  } else if (!/^https?:\/\//.test(values.href)) {
+    errors.href = [{ message: '请输入有效的网址（以 http:// 或 https:// 开头）' }];
+  }
+
+  return {
+    values,
+    errors
+  };
+};
+
 const formRef = ref();
 
-const handleOk = () => {
-  formRef.value
-    .validate()
-    .then(() => {
-      console.log('values', formState, toRaw(formState));
-      const { title, href } = toRaw(formState);
-      const site = sites.value.find(item => item.href == href);
-      if (!site) {
-        sites.value.push({
-          title,
-          href,
-          src: faviconURL(href)
-        })
-        if(layoutStore.syncBookmark) {
-          addBookmark(title, href)
-        }
+const handleOk = ({ values, valid }) => {
+  if (!valid) return;
+  const { title, href } = values;
+  const site = sites.value.find(item => item.href == href);
+  if (!site) {
+    sites.value.push({
+      title,
+      href,
+      src: faviconURL(href)
+    })
+    if (layoutStore.syncBookmark) {
+      addBookmark(title, href)
+    }
+    open.value = false;
+    // 重置表单
+    if (formRef.value?.reset) {
+      formRef.value.reset();
+    }
+    toast.add({ severity: 'success', summary: '添加成功', detail: '站点已添加', life: 2000 });
+  } else {
+    toast.add({ severity: 'info', summary: '提示', detail: '站点已存在', life: 2000 });
+  }
+}
 
-        open.value = false;
-        formRef.value.resetFields()
-        
+const addBookmark = async (title: string, href: string) => {
+  const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
+  if (results.length > 0) {
+    const ntabFolder = results[0]
+    browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
+      console.log(children)
+      console.log(sites.value)
+      let index = children.findIndex((child) => child.title == title);
+      if (index == -1) {
+        browser.bookmarks.create({
+          parentId: ntabFolder.id,
+          title: title,
+          url: href
+        })
+        toast.add({ severity: 'success', summary: '书签同步', detail: '书签已添加', life: 2000 });
       } else {
+        toast.add({ severity: 'info', summary: '书签同步', detail: 'Bookmark already exists', life: 2000 });
       }
-    }).catch((error: any) => {
-      console.warn('error', error);
-    });
+
+    })
+  } else {
+    toast.add({ severity: 'error', summary: '书签同步', detail: 'No ntab folder found in bookmarks', life: 2000 });
+    console.log(sites.value)
+  }
 }
 
 type HistoryItem = {
@@ -158,7 +198,7 @@ onMounted(() => {
       item.src = faviconURL(item.href);
     }
   });
-  
+
 
 });
 </script>
@@ -295,5 +335,45 @@ onMounted(() => {
     width: calc((var(--item-width) + var(--item-gap)) * 4 - var(--item-gap));
     ;
   }
+}
+
+.form-row {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 18px;
+}
+
+.form-label {
+  width: 60px;
+  min-width: 60px;
+  font-weight: 500;
+  padding-top: 6px;
+  color: #333;
+}
+
+.form-field {
+  flex: 1;
+}
+
+.input-full {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.form-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.btn-cancel {
+  background: none;
+  border: none;
+  color: #888;
+}
+
+.btn-ok {
+  margin-left: 8px;
 }
 </style>

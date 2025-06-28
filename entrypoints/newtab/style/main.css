@@ -13,3 +13,11 @@ a,
   padding: 3px;
 }
 
+.flex {
+  display: flex;
+  align-items: center;
+}
+.ml-12 {
+  margin-left: 12px;
+}
+

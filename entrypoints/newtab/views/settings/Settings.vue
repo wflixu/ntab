@@ -1,31 +1,35 @@
 <template>
     <div class="settings " :class="{ 'expand': open }">
         <span class="icon" @click="onToggle">
-            <SettingOutlined :style="iconStyle" />
+            <i class="pi pi-cog" :style="iconStyle"></i>
         </span>
-        <a-drawer v-model:open="open" title="设置" :width="810" placement="right" @after-open-change="afterOpenChange">
-            <a-tabs v-model:activeKey="activeKey" type="card">
-                <a-tab-pane key="bg" tab="背景">
-                   
-                </a-tab-pane>
-                <a-tab-pane key="bookmark" tab="书签同步">
-                   
-                </a-tab-pane>
-            </a-tabs>
-            <template v-if="activeKey == 'bg'">
-                <ConfigBackground />
-            </template>
-            <template v-if="activeKey == 'bookmark'">
-                <ConfigBookmark />
-            </template>
-        </a-drawer>
+        <Drawer v-model:visible="open" header="设置" :modal="true" :style="{ width: '810px' }" position="right" @after-hide="afterOpenChange(false)" @show="afterOpenChange(true)">
+            <Tabs :value="activeKey">
+                <TabList>
+                    <Tab value="bg">背景</Tab>
+                    <Tab value="bookmark">书签同步</Tab>
+                </TabList>
+                <TabPanels>
+                    <TabPanel value="bg">
+                        <ConfigBackground />
+                    </TabPanel>
+                    <TabPanel value="bookmark">
+                        <ConfigBookmark />
+                    </TabPanel>
+                </TabPanels>
+            </Tabs>
+        </Drawer>
     </div>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
-
-import { SettingOutlined } from "@ant-design/icons-vue"
+import Tabs from 'primevue/tabs';
+import TabList from 'primevue/tablist';
+import Tab from 'primevue/tab';
+import TabPanels from 'primevue/tabpanels';
+import TabPanel from 'primevue/tabpanel';
+import Drawer from 'primevue/drawer';
 import ConfigBackground from './ConfigBackground.vue'
 import ConfigBookmark from "./ConfigBookmark.vue";
 
@@ -40,13 +44,11 @@ const activeKey = ref('bg')
 
 const onToggle = () => {
     open.value = !open.value
-
 }
 
 const afterOpenChange = (bool: boolean) => {
     console.log('open', bool);
 };
-
 </script>
 
 <style scoped>

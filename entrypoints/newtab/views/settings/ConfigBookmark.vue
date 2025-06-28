@@ -1,86 +1,51 @@
 <template>
     <div class="config-bookmark">
-        <h2>
-            <a-checkbox v-model:checked="layoutStore.syncBookmark">是否在新增站点的时候同步到书签</a-checkbox>
+        <h2 class="flex">
+            <Checkbox v-model="layoutStore.syncBookmark" input-id="syncBookmark" binary></Checkbox>
+             <label class="ml-12" for="syncBookmark"> 是否在新增站点的时候同步到书签 </label>
         </h2>
         <div class="row">
-            <a-input style="width: 360px;" v-model:value="layoutStore.syncBookmarkFolder" size="large"
-                placeholder="Sync Folder" max-length="20" />
+            <InputText style="width: 360px;" v-model="layoutStore.syncBookmarkFolder" placeholder="Sync Folder" maxlength="20" />
             <div>
-                <a-button type="primary" @click="syncFromBookmarks">
-                    <template #icon>
-                        <DownloadOutlined />
-                    </template>
-                    From Bookmarks
-                </a-button>
-                <a-button class="ml-2" type="primary" @click="uploadBookmarks">
-                    <template #icon>
-                        <UploadOutlined />
-                    </template>
-                    Sync Bookmarks
-                </a-button>
+                <Button severity="primary" @click="syncFromBookmarks" icon="pi pi-download" label="From Bookmarks" />
+                <Button class="ml-2" severity="primary" @click="uploadBookmarks" icon="pi pi-upload" label="Sync Bookmarks" />
             </div>
-
         </div>
-
     </div>
 </template>
 
 <script setup lang="ts">
-
-import { ref, watch } from 'vue'
-import { DownloadOutlined, UploadOutlined } from '@ant-design/icons-vue'
+import { ref } from 'vue'
+import Checkbox from 'primevue/checkbox'
+import InputText from 'primevue/inputtext'
+import Button from 'primevue/button'
+import { useToast } from 'primevue/usetoast'
 import { browser } from 'wxt/browser'
-import { message } from 'ant-design-vue';
-
 import { useLayoutStore } from '../../stores/layout'
-import type { ISite, ISiteFormState } from "../home/type";
+import type { ISite } from "../home/type";
 import { useLocalStorage } from '@vueuse/core'
 import { faviconURL } from './../../shared/index'
 
 const sites = useLocalStorage<ISite[]>('my-sites', [])
-
 const layoutStore = useLayoutStore()
-
-
-
-
+const toast = useToast()
 
 const syncFromBookmarks = async () => {
-
     if (browser.bookmarks) {
-
-       
-        browser.bookmarks.getTree().then(([tree]) => {
-            console.log(tree)
-        })
-        // browser.bookmarks.getChildren('1').then((children) => {
-        //     console.log(children)
-        // })
-
-        // browser.bookmarks.create({ title: 'ntab',}).then((newFolder) => {
-        //     console.log(newFolder)
-        // })
         const results = await browser.bookmarks.search({ title: layoutStore.syncBookmarkFolder })
         if (results.length > 0) {
             const ntabFolder = results[0]
             browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
-                console.log(children)
-                console.log(sites.value)
                 sites.value = []
                 children.forEach((child) => {
-
                     sites.value.push({ title: child.title, href: child.url!, src: faviconURL(child.url!) })
-
                 })
+                toast.add({ severity: 'success', summary: '同步成功', detail: '已从书签同步', life: 2000 });
             })
         } else {
-            message.error('No ntab folder found in bookmarks')
-            console.log(sites.value)
+            toast.add({ severity: 'error', summary: '同步失败', detail: 'No ntab folder found in bookmarks', life: 2000 });
         }
-
     }
-
 }
 
 const uploadBookmarks = async () => {
@@ -93,8 +58,6 @@ const uploadBookmarks = async () => {
     }
 
     browser.bookmarks.getChildren(ntabFolder.id).then((children) => {
-        console.log(children)
-        console.log(sites.value)
         sites.value.forEach((site) => {
             const index = children.findIndex((c) => c.title === site.title)
             if (index === -1) {
@@ -110,10 +73,9 @@ const uploadBookmarks = async () => {
                 })
             }
         })
+        toast.add({ severity: 'success', summary: '同步成功', detail: '书签已同步', life: 2000 });
     })
 }
-
-
 </script>
 
 <style scoped>
