@@ -8,6 +8,7 @@
                 <TabList>
                     <Tab value="bg">背景</Tab>
                     <Tab value="bookmark">书签同步</Tab>
+                    <Tab value="storage-test">存储测试</Tab>
                 </TabList>
                 <TabPanels>
                     <TabPanel value="bg">
@@ -15,6 +16,9 @@
                     </TabPanel>
                     <TabPanel value="bookmark">
                         <ConfigBookmark />
+                    </TabPanel>
+                    <TabPanel value="storage-test">
+                        <ConfigStorageTest />
                     </TabPanel>
                 </TabPanels>
             </Tabs>
@@ -32,6 +36,7 @@ import TabPanel from 'primevue/tabpanel';
 import Drawer from 'primevue/drawer';
 import ConfigBackground from './ConfigBackground.vue'
 import ConfigBookmark from "./ConfigBookmark.vue";
+import ConfigStorageTest from "./ConfigStorageTest.vue";
 
 
 const open = ref<boolean>(false);
