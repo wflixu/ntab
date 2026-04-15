@@ -34,7 +34,7 @@ const layoutStore = useLayoutStore()
 const imgs = ref<string[]>([])
 const baseUrl = 'https://api.wflixu.cn/wallpaper'
 const today = dayjs();
-const todayPic = `${baseUrl}/${today.format('YYYYMMDD')}/zh-cn/FHD`
+const todayPic = `${baseUrl}/${today.format('YYYYMMDD')}/zh-cn/MAK`
 // 生成一个包含日期格式 为 yyyyMMdd 格式的日期数组，今天之前6天的日期
 const pics: string[] = [] = [
     dayjs().subtract(1, 'day'),
@@ -44,14 +44,14 @@ const pics: string[] = [] = [
     dayjs().subtract(5, 'day'),
     dayjs().subtract(6, 'day'),
 ].map((date, index) => {
-    return `${baseUrl}/${date.format('YYYYMMDD')}/zh-cn/FHD`
+    return `${baseUrl}/${date.format('YYYYMMDD')}/zh-cn/MAK`
 })
 
 console.log(pics)
 
 
 const curBg = computed(() => {
-    return layoutStore.bgurl;
+    return layoutStore.bgurl.replace('UHD', 'MAK');
 })
 const circleStyle = reactive({
     fontSize: '28px',
@@ -59,7 +59,7 @@ const circleStyle = reactive({
 })
 
 const selectBg = (url: string) => {
-    let uhdUrl = url.replace('FHD', 'UHD')
+    let uhdUrl = url.replace('MAK', 'UHD')
     console.log('selectBg', uhdUrl)
     layoutStore.setBgurl(uhdUrl)
 }
